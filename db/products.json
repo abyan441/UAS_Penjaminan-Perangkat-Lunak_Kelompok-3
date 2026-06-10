@@ -1,0 +1,14 @@
+[
+  {
+    "id": "P01",
+    "name": "Espresso",
+    "price": 20000.0,
+    "stock": 50
+  },
+  {
+    "id": "P02",
+    "name": "Caramel Macchiato",
+    "price": 35000.0,
+    "stock": 10
+  }
+]

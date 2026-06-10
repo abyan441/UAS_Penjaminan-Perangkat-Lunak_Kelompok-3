@@ -1,0 +1,111 @@
+name: CoffeeShop CI Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # ======================
+    # PHP
+    # ======================
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: xdebug
+
+    - name: Install PHP Dependencies
+      working-directory: frontend
+      run: composer install
+
+    # ======================
+    # JAVA
+    # ======================
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+
+    - name: Compile Backend
+      working-directory: backend
+      run: |
+        javac -cp ".:lib/*" *.java
+
+    # ======================
+    # Start Backend API
+    # ======================
+
+    - name: Start Java Backend
+      working-directory: backend
+      run: |
+        nohup java -cp ".:lib/*" CoffeShopEngine > server.log 2>&1 &
+        sleep 10
+
+    # ======================
+    # Start PHP Server
+    # ======================
+
+    - name: Start PHP Frontend
+      working-directory: frontend
+      run: |
+        nohup php -S localhost:8000 > php.log 2>&1 &
+        sleep 5
+
+    # ======================
+    # Selenium Chrome
+    # ======================
+
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@v1
+
+    # ======================
+    # JUnit Test
+    # ======================
+
+    - name: Run Java Tests
+      working-directory: backend
+      run: |
+        java \
+        -javaagent:lib/org.jacoco.agent-0.8.13-runtime.jar=destfile=jacoco.exec \
+        -cp ".:lib/*" \
+        org.junit.platform.console.ConsoleLauncher \
+        --scan-class-path
+
+    # ======================
+    # Generate JaCoCo
+    # ======================
+
+    - name: Generate Coverage Report
+      working-directory: backend
+      run: |
+        mkdir classes
+        cp CoffeShopEngine.class classes/
+        cp CoffeShopEngine\$OrderHandler.class classes/
+
+        java -jar \
+        lib/org.jacoco.cli-0.8.13-nodeps.jar \
+        report jacoco.exec \
+        --classfiles classes \
+        --sourcefiles . \
+        --html jacoco-report
+
+    # ======================
+    # PHPUnit
+    # ======================
+
+    - name: Run PHP Tests
+      working-directory: frontend
+      run: |
+        php vendor/bin/phpunit tests

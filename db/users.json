@@ -1,0 +1,12 @@
+[
+  {
+    "id": "U01",
+    "username": "mahasiswa1",
+    "isMember": true
+  },
+  {
+    "id": "U02",
+    "username": "tamu",
+    "isMember": false
+  }
+]

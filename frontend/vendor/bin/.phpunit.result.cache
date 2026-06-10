@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"CheckoutTest::testProductId":0.013,"CheckoutTest::testQty":0.001,"CheckoutTest::testMember":0.003,"CheckoutTest::testOrderSuccess":30.789,"CheckoutTest::testOrderFailed":16.288}}
