@@ -64,7 +64,7 @@ jobs:
         sleep 5
 
     # ======================
-    # Selenium Chrome
+    # Chrome Browser
     # ======================
 
     - name: Setup Chrome
@@ -90,7 +90,9 @@ jobs:
     - name: Generate Coverage Report
       working-directory: backend
       run: |
-        mkdir classes
+        rm -rf classes
+        mkdir -p classes
+
         cp CoffeShopEngine.class classes/
         cp CoffeShopEngine\$OrderHandler.class classes/
 
