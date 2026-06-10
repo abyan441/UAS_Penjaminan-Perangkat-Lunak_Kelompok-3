@@ -12,32 +12,51 @@ public class CoffeShopSystemTest {
     @Test
     void testCheckoutFlow() throws Exception {
 
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "C:\\Users\\ThinkPad\\OneDrive\\Dokumen\\SEMESTER 6\\penjaminan perangkat lunak\\chromedriver-win64\\chromedriver.exe"
-        );
+        ChromeOptions options =
+                new ChromeOptions();
 
-        ChromeOptions options = new ChromeOptions();
+        String os =
+                System.getProperty("os.name")
+                        .toLowerCase();
 
-        options.setBinary(
-                "C:\\Users\\ThinkPad\\OneDrive\\Dokumen\\SEMESTER 6\\penjaminan perangkat lunak\\chrome-win64\\chrome-win64\\chrome.exe"
-        );
+        if (os.contains("win")) {
 
-        WebDriver driver = new ChromeDriver(options);
+            System.setProperty(
+                    "webdriver.chrome.driver",
+                    "C:\\Users\\ThinkPad\\OneDrive\\Dokumen\\SEMESTER 6\\penjaminan perangkat lunak\\chromedriver-win64\\chromedriver.exe"
+            );
+
+            options.setBinary(
+                    "C:\\Users\\ThinkPad\\OneDrive\\Dokumen\\SEMESTER 6\\penjaminan perangkat lunak\\chrome-win64\\chrome-win64\\chrome.exe"
+            );
+
+        } else {
+
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+
+        }
+
+        WebDriver driver =
+                new ChromeDriver(options);
 
         try {
 
-            driver.get("http://localhost:8000");
+            driver.get(
+                    "http://localhost:8000"
+            );
 
             driver.findElement(
                     By.id("customerName")
             ).sendKeys("Abyan");
 
-            Select member = new Select(
-                    driver.findElement(
-                            By.id("isMember")
-                    )
-            );
+            Select member =
+                    new Select(
+                            driver.findElement(
+                                    By.id("isMember")
+                            )
+                    );
 
             member.selectByValue("true");
 
@@ -46,7 +65,9 @@ public class CoffeShopSystemTest {
             ).sendKeys("JAVACOFFEE");
 
             driver.findElement(
-                    By.cssSelector("input[value='P01']")
+                    By.cssSelector(
+                            "input[value='P01']"
+                    )
             ).click();
 
             driver.findElement(
@@ -64,7 +85,8 @@ public class CoffeShopSystemTest {
             Thread.sleep(2000);
 
             assertTrue(
-                    driver.getPageSource().contains("Pesanan berhasil")
+                    driver.getPageSource()
+                            .contains("Pesanan berhasil")
             );
 
         } finally {
